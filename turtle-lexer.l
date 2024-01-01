@@ -9,11 +9,84 @@
 
 %option warn 8bit nodefault noyywrap
 
-DIGIT [0-9]
+COMMENT         "#".*
+DIGIT           [0-9]
+DOUBLE          [-+]?([0-9]+\.?|[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
+VAR             [a-zA-Z][a-zA-Z0-9]*
+L_BRACKET       "{"
+R_BRACKET       "}"
+L_PARENTHESIS   "("
+R_PARENTHESIS   ")"
 
 %%
 
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
+{DOUBLE}              { yylval.value = strtod(yytext, NULL); return VALUE; }
+{VAR}                 { yylval.name = yytext; return NAME; }
+
+/*
+COULEURS
+*/
+
+"red"                 { return RED; }
+"green"               { return GREEN; }
+"blue"                { return BLUE; }
+"cyan"                { return CYAN; }
+"magenta"             { return MAGENTA; }
+"yellow"              { return YELLOW; }
+"black"               { return BLACK; }
+"gray"                { return GRAY; }
+"white"               { return WHITE; }
+
+/*
+OPERATEURS
+*/
+
+"+"                   { return '+'; }
+"-"                   { return '-'; }
+"*"                   { return '*'; }
+"/"                   { return '/'; }
+"^" 	              { return '^'; }
+
+/*
+FONCTIONS INTERNES
+*/
+
+"sin"                 { return FUNC_SIN; }
+"cos"                 { return FUNC_COS; }
+"tan"                 { return FUNC_TAN; }
+"sqrt"                { return FUNC_SQRT; }
+"random"              { return FUNC_RANDOM; }
+
+/*
+COMMANDES SIMPLES
+*/
+
+"print"               { return KW_PRINT; }
+"up"                  { return KW_UP; }
+"down"                { return KW_DOWN; }
+"forward"             { return KW_FORWARD; }
+"fw"                  { return KW_FORWARD; }
+"backward"            { return KW_BACKWARD; }
+"bw"                  { return KW_BACKWARD; }
+"position"            { return KW_POSITION; }
+"pos"                 { return KW_POSITION; }
+"right"               { return KW_RIGHT; }
+"rt"                  { return KW_RIGHT; }
+"left"                { return KW_LEFT; }
+"lt"                  { return KW_LEFT; }
+"heading"             { return KW_HEADING; }
+"hd"                  { return KW_HEADING; }
+"color"               { return KW_COLOR; }
+"home"                { return KW_HOME; }
+
+"repeat"              { return KW_REPEAT; }
+
+"set"                 {return KW_SET;}
+
+"proc"                {return KW_PROC;}
+"call"                {return KW_CALL;}
+
 
 [\n\t ]*              /* whitespace */
 .                     { fprintf(stderr, "Unknown token: '%s'\n", yytext); exit(EXIT_FAILURE); }
