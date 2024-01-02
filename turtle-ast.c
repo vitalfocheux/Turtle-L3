@@ -16,9 +16,20 @@ struct ast_node *make_expr_value(double value) {
   return node;
 }
 
+void ast_node_destroy(struct ast_node *self) {
+  if (self == NULL) {
+    return;
+  }
+  for (size_t i = 0; i < self->children_count; i++) {
+    ast_node_destroy(self->children[i]);
+  }
+  ast_node_destroy(self->next);
+  free(self);
+}
 
 void ast_destroy(struct ast *self) {
-
+  ast_node_destroy(self->unit);
+  free(self);
 }
 
 /*
