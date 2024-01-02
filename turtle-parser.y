@@ -24,8 +24,6 @@ void yyerror(struct ast *ret, const char *);
 %token <value>    VALUE       "value"
 %token <name>     NAME        "name"
 
-%token            KW_FORWARD  "forward"
-
 %token            RED         "red"
 %token            GREEN       "green"
 %token            BLUE        "blue"
@@ -42,40 +40,30 @@ void yyerror(struct ast *ret, const char *);
 %token            '/'         DIV
 %token            '^'         POW
 
-%token            FUNC_SIN    "sin"
-%token            FUNC_COS    "cos"
-%token            FUNC_TAN    "tan"
-%token            FUNC_SQRT   "sqrt"
-%token            FUNC_RANDOM "random"
+%token            FCT_SIN     "sin"
+%token            FCT_COS     "cos"
+%token            FCT_TAN     "tan"
+%token            FCT_SQRT    "sqrt"
+%token            FCT_RANDOM  "random"
 
 %token            KW_PRINT    "print"
 %token            KW_UP       "up"
 %token            KW_DOWN     "down"
 %token            KW_FORWARD  "forward"
-%token            KW_FORWARD  "fw"
 %token            KW_BACKWARD "backward"
-%token            KW_BACKWARD "bw"
 %token            KW_POSITION "position"
-%token            KW_POSITION "pos" 
 %token            KW_RIGHT    "right"
-%token            KW_RIGHT    "rt"
 %token            KW_LEFT     "left"
-%token            KW_LEFT     "lt"
 %token            KW_HEADING  "heading"
-%token            KW_HEADING  "hd"
 %token            KW_COLOR    "color"
 %token            KW_HOME     "home"
 
 %token            KW_REPEAT   "repeat"
 
-/*
-TODO: Faire les procédures et les variables
+%token            KW_SET      "set"
 
-"set"                 {return KW_SET;}
-
-"proc"                {return KW_PROC;}
-"call"                {return KW_CALL;}
-*/
+%token            KW_PROC     "proc"
+%token            KW_CALL     "call"
 
 %token            '{'         L_BRACKET
 %token            '}'         R_BRACKET
@@ -104,7 +92,7 @@ cmds:
 ;
 
 cmd:
-    KW_FORWARD expr   { /* TODO */ }
+    KW_FORWARD expr   { $$ = make_cmd_forward($2); }
 ;
 
 expr:

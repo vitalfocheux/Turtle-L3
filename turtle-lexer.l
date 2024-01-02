@@ -24,10 +24,6 @@ R_PARENTHESIS   ")"
 {DOUBLE}              { yylval.value = strtod(yytext, NULL); return VALUE; }
 {VAR}                 { yylval.name = yytext; return NAME; }
 
-/*
-COULEURS
-*/
-
 "red"                 { return RED; }
 "green"               { return GREEN; }
 "blue"                { return BLUE; }
@@ -38,29 +34,17 @@ COULEURS
 "gray"                { return GRAY; }
 "white"               { return WHITE; }
 
-/*
-OPERATEURS
-*/
-
 "+"                   { return '+'; }
 "-"                   { return '-'; }
 "*"                   { return '*'; }
 "/"                   { return '/'; }
 "^" 	              { return '^'; }
 
-/*
-FONCTIONS INTERNES
-*/
-
-"sin"                 { return FUNC_SIN; }
-"cos"                 { return FUNC_COS; }
-"tan"                 { return FUNC_TAN; }
-"sqrt"                { return FUNC_SQRT; }
-"random"              { return FUNC_RANDOM; }
-
-/*
-COMMANDES SIMPLES
-*/
+"sin"                 { return FCT_SIN; }
+"cos"                 { return FCT_COS; }
+"tan"                 { return FCT_TAN; }
+"sqrt"                { return FCT_SQRT; }
+"random"              { return FCT_RANDOM; }
 
 "print"               { return KW_PRINT; }
 "up"                  { return KW_UP; }

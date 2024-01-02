@@ -68,6 +68,7 @@ struct ast_node {
 // TODO: make some constructors to use in parser.y
 // for example:
 struct ast_node *make_expr_value(double value);
+struct ast_node *make_cmd_forward(struct ast_node *expr);
 
 
 // root of the abstract syntax tree
@@ -96,6 +97,8 @@ void context_create(struct context *self);
 
 // print the tree as if it was a Turtle program
 void ast_print(const struct ast *self);
+
+void ast_node_print(const struct ast_node *self);
 
 // evaluate the tree and generate some basic primitives
 void ast_eval(const struct ast *self, struct context *ctx);
