@@ -88,6 +88,12 @@ COMMANDES SIMPLES
 "call"                {return KW_CALL;}
 
 
+{L_BRACKET}           { return '{'; }
+{R_BRACKET}           { return '}'; }
+{L_PARENTHESIS}       { return '('; }
+{R_PARENTHESIS}       { return ')'; }
+
+
 [\n\t ]*              /* whitespace */
 .                     { fprintf(stderr, "Unknown token: '%s'\n", yytext); exit(EXIT_FAILURE); }
 
