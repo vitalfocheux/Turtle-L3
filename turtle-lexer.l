@@ -12,6 +12,8 @@
 COMMENT         "#".*
 DIGIT           [0-9]
 DOUBLE          [-+]?([0-9]+\.?|[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
+HEXA            0[xX][0-9a-fA-F]+
+BINAIRE         0[bB][01]+
 VAR             [a-zA-Z][a-zA-Z0-9]*
 L_BRACKET       "{"
 R_BRACKET       "}"
@@ -21,7 +23,9 @@ R_PARENTHESIS   ")"
 %%
 
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
-{DOUBLE}              { yylval.value = strtod(yytext, NULL); return VALUE; }
+{DOUBLE}+             { yylval.value = strtod(yytext, NULL); return VALUE; }
+{HEXA}+               { yylval.value = strtol(yytext, NULL, 16); return VALUE; }
+{BINAIRE}+            { yylval.value = strtol(yytext, NULL, 2); return VALUE; } 
 {VAR}                 { yylval.name = yytext; return NAME; }
 
 "red"                 { return RED; }
