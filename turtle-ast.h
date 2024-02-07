@@ -67,8 +67,35 @@ struct ast_node {
 
 // TODO: make some constructors to use in parser.y
 // for example:
+struct ast_node *make_expr_func(enum ast_func func, struct ast_node *expr);
 struct ast_node *make_expr_value(double value);
+struct ast_node *make_expr_unop(char op, struct ast_node *expr);
+struct ast_node *make_expr_binop(char op, struct ast_node *expr1, struct ast_node *expr2);
+struct ast_node *make_expr_block(struct ast_node *block);
+struct ast_node *make_expr_name(char *name);
+
+struct ast_node *make_cmd_print(struct ast_node *expr);
+struct ast_node *make_cmd_up();
+struct ast_node *make_cmd_down();
 struct ast_node *make_cmd_forward(struct ast_node *expr);
+struct ast_node *make_cmd_backward(struct ast_node *expr);
+struct ast_node *make_cmd_pos(struct ast_node *expr1, struct ast_node *expr2);
+struct ast_node *make_cmd_right(struct ast_node *expr);
+struct ast_node *make_cmd_left(struct ast_node *expr);
+struct ast_node *make_cmd_heading(struct ast_node *expr);
+struct ast_node *make_cmd_color_RGB(struct ast_node *red, struct ast_node *green, struct ast_node *blue);
+struct ast_node *make_cmd_color(char *color);
+struct ast_node *make_cmd_home();
+struct ast_node *make_cmd_repeat(struct ast_node *expr, struct ast_node *block);
+struct ast_node *make_cmd_set(char *name, struct ast_node *expr);
+struct ast_node *make_cmd_proc(char *name, struct ast_node *block);
+struct ast_node *make_cmd_call(char *name);
+
+struct ast_node *make_math_sin(struct ast_node *expr);
+struct ast_node *make_math_cos(struct ast_node *expr);
+struct ast_node *make_math_tan(struct ast_node *expr);
+struct ast_node *make_math_sqrt(struct ast_node *expr);
+struct ast_node *make_math_random(struct ast_node *lower_bound, struct ast_node *upper_bound);
 
 
 // root of the abstract syntax tree
@@ -99,6 +126,8 @@ void context_create(struct context *self);
 void ast_print(const struct ast *self);
 
 void ast_node_print(const struct ast_node *self);
+
+void ast_node_print_cmd_simple(const struct ast_node *self);
 
 // evaluate the tree and generate some basic primitives
 void ast_eval(const struct ast *self, struct context *ctx);

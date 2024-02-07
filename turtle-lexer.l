@@ -14,41 +14,27 @@ DIGIT           [0-9]
 DOUBLE          [-+]?([0-9]+\.?|[0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 HEXA            0[xX][0-9a-fA-F]+
 BINAIRE         0[bB][01]+
-VAR             [a-zA-Z][a-zA-Z0-9]*
-L_BRACKET       "{"
-R_BRACKET       "}"
-L_PARENTHESIS   "("
-R_PARENTHESIS   ")"
+VAR             [A-Z][A-Z0-9]*
+COLOR           red|green|blue|cyan|magenta|yellow|black|gray|white
 
 %%
 
+    /* les reconnaissances des lexèmes relatif aux valeurs reconnu avec des regex */
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
 {DOUBLE}+             { yylval.value = strtod(yytext, NULL); return VALUE; }
-{HEXA}+               { yylval.value = strtol(yytext, NULL, 16); return VALUE; }
-{BINAIRE}+            { yylval.value = strtol(yytext, NULL, 2); return VALUE; } 
+{HEXA}+               { yylval.value = strtod(yytext, NULL); return VALUE; }
 {VAR}                 { yylval.name = yytext; return NAME; }
+{COLOR}               { yylval.color = yytext; return COLOR; }
 
-"red"                 { return RED; }
-"green"               { return GREEN; }
-"blue"                { return BLUE; }
-"cyan"                { return CYAN; }
-"magenta"             { return MAGENTA; }
-"yellow"              { return YELLOW; }
-"black"               { return BLACK; }
-"gray"                { return GRAY; }
-"white"               { return WHITE; }
-
-"+"                   { return '+'; }
-"-"                   { return '-'; }
-"*"                   { return '*'; }
-"/"                   { return '/'; }
-"^" 	              { return '^'; }
+    /* les reconnaissances des lexèmes relatif aux fonctions */
 
 "sin"                 { return FCT_SIN; }
 "cos"                 { return FCT_COS; }
 "tan"                 { return FCT_TAN; }
 "sqrt"                { return FCT_SQRT; }
 "random"              { return FCT_RANDOM; }
+
+    /* les reconnaissances des lexèmes relatif aux commandes */
 
 "print"               { return KW_PRINT; }
 "up"                  { return KW_UP; }
@@ -70,17 +56,12 @@ R_PARENTHESIS   ")"
 
 "repeat"              { return KW_REPEAT; }
 
-"set"                 {return KW_SET;}
+"set"                 { return KW_SET; }
 
-"proc"                {return KW_PROC;}
-"call"                {return KW_CALL;}
+"proc"                { return KW_PROC; }
+"call"                { return KW_CALL; }
 
-
-{L_BRACKET}           { return '{'; }
-{R_BRACKET}           { return '}'; }
-{L_PARENTHESIS}       { return '('; }
-{R_PARENTHESIS}       { return ')'; }
-
+[,]                   { return *yytext; }
 
 [\n\t ]*              /* whitespace */
 .                     { fprintf(stderr, "Unknown token: '%s'\n", yytext); exit(EXIT_FAILURE); }

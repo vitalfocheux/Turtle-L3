@@ -18,57 +18,38 @@ void yyerror(struct ast *ret, const char *);
 %union {
   double value;
   char *name;
+  char *color;
   struct ast_node *node;
 }
 
 %token <value>    VALUE       "value"
 %token <name>     NAME        "name"
+%token <color>    COLOR       "color"
 
-%token            RED         "red"
-%token            GREEN       "green"
-%token            BLUE        "blue"
-%token            CYAN        "cyan"
-%token            MAGENTA     "magenta"
-%token            YELLOW      "yellow"
-%token            BLACK       "black"
-%token            GRAY        "gray"
-%token            WHITE       "white"
+%token            FCT_SIN     
+%token            FCT_COS     
+%token            FCT_TAN     
+%token            FCT_SQRT    
+%token            FCT_RANDOM  
 
-%token            '+'         PLUS
-%token            '-'         MINUS
-%token            '*'         TIMES
-%token            '/'         DIV
-%token            '^'         POW
+%token            KW_PRINT    
+%token            KW_UP       
+%token            KW_DOWN     
+%token            KW_FORWARD  
+%token            KW_BACKWARD 
+%token            KW_POSITION 
+%token            KW_RIGHT    
+%token            KW_LEFT    
+%token            KW_HEADING  
+%token            KW_COLOR    
+%token            KW_HOME     
 
-%token            FCT_SIN     "sin"
-%token            FCT_COS     "cos"
-%token            FCT_TAN     "tan"
-%token            FCT_SQRT    "sqrt"
-%token            FCT_RANDOM  "random"
+%token            KW_REPEAT   
 
-%token            KW_PRINT    "print"
-%token            KW_UP       "up"
-%token            KW_DOWN     "down"
-%token            KW_FORWARD  "forward"
-%token            KW_BACKWARD "backward"
-%token            KW_POSITION "position"
-%token            KW_RIGHT    "right"
-%token            KW_LEFT     "left"
-%token            KW_HEADING  "heading"
-%token            KW_COLOR    "color"
-%token            KW_HOME     "home"
+%token            KW_SET      
 
-%token            KW_REPEAT   "repeat"
-
-%token            KW_SET      "set"
-
-%token            KW_PROC     "proc"
-%token            KW_CALL     "call"
-
-%token            '{'         L_BRACKET
-%token            '}'         R_BRACKET
-%token            '('         L_PARENTHESIS
-%token            ')'         R_PARENTHESIS
+%token            KW_PROC     
+%token            KW_CALL     
 
 
 /* TODO: add other tokens */
@@ -76,9 +57,9 @@ void yyerror(struct ast *ret, const char *);
 %left '+' '-'
 %left '*' '/'
 %left '^'
-%left UNARY_MINUS
+%left UNARY_OP
 
-%type <node> unit cmds cmd expr
+%type <node> unit cmds cmd expr func
 
 %%
 
@@ -92,12 +73,42 @@ cmds:
 ;
 
 cmd:
-    KW_FORWARD expr   { $$ = make_cmd_forward($2); }
+    KW_PRINT    expr                    { $$ = make_cmd_print($2); }
+  | KW_UP                               { $$ = make_cmd_up(); }
+  | KW_DOWN                             { $$ = make_cmd_down(); }
+  | KW_FORWARD  expr                    { $$ = make_cmd_forward($2); }
+  | KW_BACKWARD expr                    { $$ = make_cmd_backward($2); }
+  | KW_POSITION expr ',' expr           { $$ = make_cmd_pos($2, $4); }
+  | KW_RIGHT    expr                    { $$ = make_cmd_right($2); }
+  | KW_LEFT     expr                    { $$ = make_cmd_left($2); }
+  | KW_HEADING  expr                    { $$ = make_cmd_heading($2); }
+  | KW_COLOR    expr ',' expr ',' expr  { $$ = make_cmd_color_RGB($2, $4, $6); }
+  | KW_COLOR    COLOR                   { $$ = make_cmd_color($2); }
+  | KW_HOME                             { $$ = make_cmd_home(); }
+  | KW_REPEAT   expr '{' expr '}'       { $$ = make_cmd_repeat($2, $4); }
+  | KW_SET      NAME     expr           { $$ = make_cmd_set($2, $3); }
+  | KW_PROC     NAME '{' cmd  '}'       { $$ = make_cmd_proc($2, $4); }
+  | KW_CALL     NAME                    { $$ = make_cmd_call($2); }
 ;
 
 expr:
     VALUE             { $$ = make_expr_value($1); }
-    /* TODO: add identifier */
+  | NAME              { $$ = make_expr_name($1); }
+  | expr '+' expr    { $$ = make_expr_binop('+', $1, $3); }
+  | expr '-' expr    { $$ = make_expr_binop('-', $1, $3); }
+  | expr '*' expr    { $$ = make_expr_binop('*', $1, $3); }
+  | expr '/' expr    { $$ = make_expr_binop('/', $1, $3); }
+  | expr '^' expr    { $$ = make_expr_binop('^', $1, $3); }
+  | UNARY_OP expr    { $$ = make_expr_unop('-', $2); }
+  | func
+;
+
+func:
+    FCT_SIN     '(' expr ')'               { $$ = make_math_sin($3); }
+  | FCT_COS     '(' expr ')'               { $$ = make_math_cos($3); }
+  | FCT_TAN     '(' expr ')'               { $$ = make_math_tan($3); }
+  | FCT_SQRT    '(' expr ')'               { $$ = make_math_sqrt($3); }
+  | FCT_RANDOM  '(' expr ',' expr ')'      { $$ = make_math_random($3, $5); }
 ;
 
 %%
