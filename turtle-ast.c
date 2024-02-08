@@ -230,19 +230,22 @@ struct ast_node *make_math_random(struct ast_node *lower_bound, struct ast_node 
 }
 
 void ast_node_destroy(struct ast_node *self) {
-  if (self == NULL) {
-    return;
-  }
-  for (size_t i = 0; i < self->children_count; i++) {
+  for(size_t i = 0; i < self->children_count; ++i){
     ast_node_destroy(self->children[i]);
   }
-  ast_node_destroy(self->next);
-  free(self);
+
+  if(self->next == NULL){
+    free(self);
+  }else{
+    ast_node_destroy(self->next);
+    self->next = NULL;
+    free(self);
+  }
 }
 
 void ast_destroy(struct ast *self) {
   ast_node_destroy(self->unit);
-  free(self);
+  // free(self);
 }
 
 /*
@@ -268,10 +271,10 @@ void ast_eval(const struct ast *self, struct context *ctx) {
 void ast_node_print_cmd_simple(const struct ast_node *self){
   switch(self->u.cmd){
     case CMD_UP:
-      printf("up\n");
+      printf("up");
       break;
     case CMD_DOWN:
-      printf("down\n");
+      printf("down");
       break;
     case CMD_RIGHT:
       printf("right ");
@@ -300,7 +303,7 @@ void ast_node_print_cmd_simple(const struct ast_node *self){
       ast_node_print(self->children[1]);
       break;
     case CMD_HOME:
-      printf("home\n");
+      printf("home");
       break;
     case CMD_COLOR:
       printf("color ");
@@ -310,12 +313,12 @@ void ast_node_print_cmd_simple(const struct ast_node *self){
           printf(" ");
         }
       }
-      printf("\n");
+      // printf("\n");
       break;
     case CMD_PRINT:
       printf("print ");
       ast_node_print(self->children[0]);
-      printf("\n");
+      // printf("\n");
       break;
   }
 }
@@ -338,6 +341,11 @@ void ast_node_print(const struct ast_node *self) {
   default:
     break;
   }
+  for(size_t i = 0; i < self->children_count; ++i){
+    ast_node_print(self->children[i]);
+  }
+  printf("\n");
+  ast_node_print(self->next);
 }
 
 void ast_print(const struct ast *self) {
