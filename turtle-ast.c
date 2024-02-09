@@ -129,9 +129,9 @@ struct ast_node *make_cmd_color_RGB(struct ast_node *red, struct ast_node *green
   node->kind = KIND_CMD_SIMPLE;
   node->u.cmd = CMD_COLOR;
   node->children_count = 3;
-  node->children[0] = red;
-  node->children[1] = green;
-  node->children[2] = blue;
+  node->children[0] = make_expr_value(red->u.value);
+  node->children[1] = make_expr_value(green->u.value);
+  node->children[2] = make_expr_value(blue->u.value);
   return node;
 }
 
@@ -278,41 +278,39 @@ void ast_node_print_cmd_simple(const struct ast_node *self){
       break;
     case CMD_RIGHT:
       printf("right ");
-      ast_node_print(self->children[0]);
+      // ast_node_print(self->children[0]);
       break;
     case CMD_LEFT:
       printf("left ");
-      ast_node_print(self->children[0]);
+      // ast_node_print(self->children[0]);
       break;
     case CMD_HEADING:
       printf("heading ");
-      ast_node_print(self->children[0]);
+      // ast_node_print(self->children[0]);
       break;
     case CMD_FORWARD:
       printf("fw ");
-      ast_node_print(self->children[0]);
+      // ast_node_print(self->children[0]);
       break;
     case CMD_BACKWARD:
       printf("bw ");
-      ast_node_print(self->children[0]);
+      // ast_node_print(self->children[0]);
       break;
     case CMD_POSITION:
       printf("pos ");
-      ast_node_print(self->children[0]);
-      printf(" ");
-      ast_node_print(self->children[1]);
+      // ast_node_print(self->children[0]);
+      // printf(" ");
+      // ast_node_print(self->children[1]);
       break;
     case CMD_HOME:
       printf("home");
       break;
     case CMD_COLOR:
       printf("color ");
-      for(size_t i = 0; i < self->children_count; i++){
-        ast_node_print(self->children[i]);
-        if(i < self->children_count - 1){
-          printf(" ");
-        }
-      }
+      // for(size_t i = 0; i < self->children_count; i++){
+      //   ast_node_print(self->children[i]);
+      //   printf(" ");
+      // }
       // printf("\n");
       break;
     case CMD_PRINT:
@@ -323,6 +321,32 @@ void ast_node_print_cmd_simple(const struct ast_node *self){
   }
 }
 
+void ast_node_print_cmd_repeat(const struct ast_node *self){
+
+}
+
+void ast_node_print_cmd_block(const struct ast_node *self){
+
+}
+
+void ast_node_print_cmd_proc(const struct ast_node *self){}
+
+void ast_node_print_cmd_call(const struct ast_node *self){}
+
+void ast_node_print_cmd_set(const struct ast_node *self){}
+
+void ast_node_print_expr_func(const struct ast_node *self){}
+
+void ast_node_print_expr_value(const struct ast_node *self){
+  printf("%f ", self->u.value);
+}
+
+void ast_node_print_expr_unop(const struct ast_node *self){}
+
+void ast_node_print_expr_binop(const struct ast_node *self){}
+
+void ast_node_print_expr_block(const struct ast_node *self){}
+
 void ast_node_print(const struct ast_node *self) {
   if(self == NULL) {
     return;
@@ -332,8 +356,35 @@ void ast_node_print(const struct ast_node *self) {
   case KIND_CMD_SIMPLE:
     ast_node_print_cmd_simple(self);
     break;
-  
-
+  case KIND_CMD_REPEAT:
+    ast_node_print_cmd_repeat(self);
+    break;
+  case KIND_CMD_BLOCK:
+    ast_node_print_cmd_block(self);
+    break;
+  case KIND_CMD_PROC:
+    ast_node_print_cmd_proc(self);
+    break;
+  case KIND_CMD_CALL:
+    ast_node_print_cmd_call(self);
+    break;
+  case KIND_CMD_SET:
+    ast_node_print_cmd_set(self);
+    break;  
+  case KIND_EXPR_FUNC:
+    ast_node_print_expr_func(self);
+    break;
+  case KIND_EXPR_VALUE:
+    ast_node_print_expr_value(self);
+    break;
+  case KIND_EXPR_UNOP:
+    ast_node_print_expr_unop(self);
+    break;
+  case KIND_EXPR_BINOP:
+    ast_node_print_expr_binop(self);
+    break;
+  case KIND_EXPR_BLOCK:
+    ast_node_print_expr_block(self);
   case KIND_EXPR_NAME:
     printf("%s", self->u.name);
     break;
@@ -344,7 +395,10 @@ void ast_node_print(const struct ast_node *self) {
   for(size_t i = 0; i < self->children_count; ++i){
     ast_node_print(self->children[i]);
   }
-  printf("\n");
+  if(self->next == NULL){
+    printf("\n");
+  }
+  // printf("\n");
   ast_node_print(self->next);
 }
 
