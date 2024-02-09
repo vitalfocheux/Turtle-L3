@@ -138,6 +138,7 @@ void ast_node_print_expr_value(const struct ast_node *self);
 void ast_node_print_expr_unop(const struct ast_node *self);
 void ast_node_print_expr_binop(const struct ast_node *self);
 void ast_node_print_expr_block(const struct ast_node *self);
+void ast_node_print_expr_name(const struct ast_node *self);
 
 // evaluate the tree and generate some basic primitives
 void ast_eval(const struct ast *self, struct context *ctx);

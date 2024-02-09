@@ -347,6 +347,10 @@ void ast_node_print_expr_binop(const struct ast_node *self){}
 
 void ast_node_print_expr_block(const struct ast_node *self){}
 
+void ast_ndoe_print_expr_name(const struct ast_node *self){
+  printf("%s ", self->u.name);
+}
+
 void ast_node_print(const struct ast_node *self) {
   if(self == NULL) {
     return;
@@ -386,7 +390,7 @@ void ast_node_print(const struct ast_node *self) {
   case KIND_EXPR_BLOCK:
     ast_node_print_expr_block(self);
   case KIND_EXPR_NAME:
-    printf("%s", self->u.name);
+    ast_node_print_expr_name(self);
     break;
 
   default:
