@@ -18,13 +18,21 @@ void yyerror(struct ast *ret, const char *);
 %union {
   double value;
   char *name;
-  char *color;
   struct ast_node *node;
 }
 
 %token <value>    VALUE       "value"
 %token <name>     NAME        "name"
-%token <color>    COLOR       "color"
+
+%token            RED          "red"
+%token            GREEN        "green"
+%token            BLUE         "blue"
+%token            CYAN         "cyan"
+%token            MAGENTA      "magenta"
+%token            YELLOW       "yellow"
+%token            BLACK        "black"
+%token            GREY         "grey"
+%token            WHITE        "white"
 
 %token            FCT_SIN     
 %token            FCT_COS     
@@ -38,7 +46,7 @@ void yyerror(struct ast *ret, const char *);
 %token            KW_FORWARD  
 %token            KW_BACKWARD 
 %token            KW_POSITION 
-%token            KW_RIGHT    
+%token            KW_RIGHT   
 %token            KW_LEFT    
 %token            KW_HEADING  
 %token            KW_COLOR    
@@ -59,7 +67,7 @@ void yyerror(struct ast *ret, const char *);
 %left '^'
 %left UNARY_OP
 
-%type <node> unit cmds cmd expr func
+%type <node> unit cmds cmd expr func color param name 
 
 %%
 
@@ -72,34 +80,62 @@ cmds:
   | /* empty */       { $$ = NULL; }
 ;
 
+color:
+    RED               { $$ = make_cmd_color_name(COLOR_RED); }
+  | GREEN             { $$ = make_cmd_color_name(COLOR_GREEN); }
+  | BLUE              { $$ = make_cmd_color_name(COLOR_BLUE); }
+  | CYAN              { $$ = make_cmd_color_name(COLOR_CYAN); }
+  | MAGENTA           { $$ = make_cmd_color_name(COLOR_MAGENTA); }
+  | YELLOW            { $$ = make_cmd_color_name(COLOR_YELLOW); }
+  | BLACK             { $$ = make_cmd_color_name(COLOR_BLACK); }
+  | GREY              { $$ = make_cmd_color_name(COLOR_GREY); }
+  | WHITE             { $$ = make_cmd_color_name(COLOR_WHITE); }
+;
+
+name:
+    NAME             { $$ = make_expr_name($1); }
+;
+
+param:
+    cmd              { $$ = $1; }
+  | expr             { $$ = $1; }
+  | name             { $$ = $1; }
+;
+
 cmd:
-    KW_PRINT    expr                    { $$ = make_cmd_print($2); }
+    KW_PRINT    param                    { $$ = make_cmd_print($2); }
   | KW_UP                               { $$ = make_cmd_up(); }
   | KW_DOWN                             { $$ = make_cmd_down(); }
-  | KW_FORWARD  expr                    { $$ = make_cmd_forward($2); }
-  | KW_BACKWARD expr                    { $$ = make_cmd_backward($2); }
-  | KW_POSITION expr ',' expr           { $$ = make_cmd_pos($2, $4); }
-  | KW_RIGHT    expr                    { $$ = make_cmd_right($2); }
-  | KW_LEFT     expr                    { $$ = make_cmd_left($2); }
-  | KW_HEADING  expr                    { $$ = make_cmd_heading($2); }
-  | KW_COLOR    expr ',' expr ',' expr  { $$ = make_cmd_color_RGB($2, $4, $6); }
-  | KW_COLOR    COLOR                   { $$ = make_cmd_color($2); }
+  | KW_FORWARD  param                    { $$ = make_cmd_forward($2); }
+  | KW_BACKWARD param                    { $$ = make_cmd_backward($2); }
+  | KW_POSITION param ',' param           { $$ = make_cmd_pos($2, $4); }
+  | KW_RIGHT    param                    { $$ = make_cmd_right($2); }
+  | KW_LEFT     param                    { $$ = make_cmd_left($2); }
+  | KW_HEADING  param                    { $$ = make_cmd_heading($2); }
+  | KW_COLOR    color                   { $$ = make_cmd_color($2); }
+  | KW_COLOR    param ',' param ',' param  { $$ = make_cmd_color_RGB($2, $4, $6); }
   | KW_HOME                             { $$ = make_cmd_home(); }
-  | KW_REPEAT   expr '{' expr '}'       { $$ = make_cmd_repeat($2, $4); }
-  | KW_SET      NAME     expr           { $$ = make_cmd_set($2, $3); }
-  | KW_PROC     NAME '{' cmd  '}'       { $$ = make_cmd_proc($2, $4); }
-  | KW_CALL     NAME                    { $$ = make_cmd_call($2); }
+  | KW_REPEAT   param '{' cmds '}'         { $$ = make_cmd_repeat($2, $4); }
+  | KW_SET      name     expr           { $$ = make_cmd_set($2, $3); }
+  | KW_PROC     name '{' cmds '}'           { $$ = make_cmd_proc($2, $4); }
+  | KW_CALL     name                    { $$ = make_cmd_call($2); }
+  | '{' cmds '}'                        { $$ = make_cmd_block($2); }
 ;
+
+
+
+
 
 expr:
     VALUE             { $$ = make_expr_value($1); }
-  | NAME              { $$ = make_expr_name($1); }
+  | name              { $$ = $1; }
   | expr '+' expr    { $$ = make_expr_binop('+', $1, $3); }
   | expr '-' expr    { $$ = make_expr_binop('-', $1, $3); }
   | expr '*' expr    { $$ = make_expr_binop('*', $1, $3); }
   | expr '/' expr    { $$ = make_expr_binop('/', $1, $3); }
   | expr '^' expr    { $$ = make_expr_binop('^', $1, $3); }
-  | UNARY_OP expr    { $$ = make_expr_unop('-', $2); }
+  | '(' expr ')'      { $$ = make_expr_block($2); }
+  | '-' expr %prec UNARY_OP    { $$ = make_expr_unop('-', $2); }
   | func
 ;
 

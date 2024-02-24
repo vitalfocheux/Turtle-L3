@@ -43,6 +43,20 @@ enum ast_kind {
   KIND_EXPR_BINOP,
   KIND_EXPR_BLOCK,
   KIND_EXPR_NAME,
+
+  KIND_CMD_COLOR,
+};
+
+enum color{
+  COLOR_RED,
+  COLOR_GREEN,
+  COLOR_BLUE,
+  COLOR_CYAN,
+  COLOR_MAGENTA,
+  COLOR_YELLOW,
+  COLOR_BLACK,
+  COLOR_GREY,
+  COLOR_WHITE,
 };
 
 #define AST_CHILDREN_MAX 3
@@ -57,12 +71,15 @@ struct ast_node {
     char op;            // kind == KIND_EXPR_BINOP or kind == KIND_EXPR_UNOP, for operators in expressions
     char *name;         // kind == KIND_EXPR_NAME, the name of procedures and variables
     enum ast_func func; // kind == KIND_EXPR_FUNC, a function
+    enum color col;
   } u;
 
   size_t children_count;  // the number of children of the node
   struct ast_node *children[AST_CHILDREN_MAX];  // the children of the node (arguments of commands, etc)
   struct ast_node *next;  // the next node in the sequence
 };
+
+
 
 
 // TODO: make some constructors to use in parser.y
@@ -84,12 +101,14 @@ struct ast_node *make_cmd_right(struct ast_node *expr);
 struct ast_node *make_cmd_left(struct ast_node *expr);
 struct ast_node *make_cmd_heading(struct ast_node *expr);
 struct ast_node *make_cmd_color_RGB(struct ast_node *red, struct ast_node *green, struct ast_node *blue);
-struct ast_node *make_cmd_color(char *color);
+struct ast_node *make_cmd_color_name(enum color color);
+struct ast_node *make_cmd_color(struct ast_node *expr);
 struct ast_node *make_cmd_home();
 struct ast_node *make_cmd_repeat(struct ast_node *expr, struct ast_node *block);
-struct ast_node *make_cmd_set(char *name, struct ast_node *expr);
-struct ast_node *make_cmd_proc(char *name, struct ast_node *block);
-struct ast_node *make_cmd_call(char *name);
+struct ast_node *make_cmd_set(struct ast_node *name, struct ast_node *expr);
+struct ast_node *make_cmd_proc(struct ast_node *name, struct ast_node *block);
+struct ast_node *make_cmd_call(struct ast_node *name);
+struct ast_node *make_cmd_block(struct ast_node *block);
 
 struct ast_node *make_math_sin(struct ast_node *expr);
 struct ast_node *make_math_cos(struct ast_node *expr);
