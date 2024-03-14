@@ -127,6 +127,40 @@ void ast_destroy(struct ast *self);
 
 void ast_node_destroy(struct ast_node *self);
 
+
+// struct variable {
+//   char *name;
+//   double value;
+// };
+
+// void variable_create(struct variable *self, char *name, double value);
+// void variable_destroy(struct variable *self);
+
+// /**
+//  * A simple dynamic array of variables.
+// */
+// struct variables {
+//   size_t size;
+//   size_t capacity;
+//   struct variable *var;
+// };
+
+// void variables_create();
+// void variables_destroy(struct variables *self);
+// void variables_push(struct variables *self, char *name, double value);
+// double variables_get(struct variables *self, char *name);
+
+struct array {
+  size_t size;
+  size_t capacity;
+  struct ast_node** data;
+};
+
+struct array *array_create();
+void array_destroy(struct array *self);
+void array_push_back(struct array *self, struct ast_node *node);
+struct ast_node *array_get(struct array *self, const char *name);
+
 // the execution context
 struct context {
   double x;
@@ -134,12 +168,16 @@ struct context {
   double angle;
   bool up;
 
-  // TODO: add procedure handling
-  // TODO: add variable handling
+  enum color color;
+
+  struct array *procs;
+  struct array *vars;
 };
 
 // create an initial context
 void context_create(struct context *self);
+
+void context_destroy(struct context *self);
 
 // print the tree as if it was a Turtle program
 void ast_print(const struct ast *self);
@@ -161,5 +199,19 @@ void ast_node_print_expr_name(const struct ast_node *self);
 
 // evaluate the tree and generate some basic primitives
 void ast_eval(const struct ast *self, struct context *ctx);
+double ast_eval_node(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_cmd_simple(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_cmd_repeat(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_cmd_block(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_cmd_proc(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_cmd_call(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_cmd_set(const struct ast_node *self, struct context *ctx);
+double ast_eval_node_expr_func(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_expr_value(const struct ast_node *self, struct context *ctx);
+double ast_eval_node_expr_unop(const struct ast_node *self, struct context *ctx);
+double ast_eval_node_expr_binop(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_expr_block(const struct ast_node *self, struct context *ctx);
+double ast_eval_node_expr_name(const struct ast_node *self, struct context *ctx);
+void ast_eval_node_cmd_color(const struct ast_node *self, struct context *ctx);
 
 #endif /* TURTLE_AST_H */

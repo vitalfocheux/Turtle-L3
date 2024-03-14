@@ -6,6 +6,8 @@
 #include "turtle-lexer.h"
 #include "turtle-parser.h"
 
+#define EVAL
+
 int main() {
   srand(time(NULL));
   
@@ -21,11 +23,19 @@ int main() {
 
   assert(root.unit);
 
-  // struct context ctx;
-  // context_create(&ctx);
+  #ifdef EVAL
+
+  struct context ctx;
+  context_create(&ctx);
   
-  //ast_eval(&root, &ctx);
+  ast_eval(&root, &ctx);
+  // context_destroy(&ctx);
+
+  #else 
+  
   ast_print(&root);
+
+  #endif
 
   ast_destroy(&root);
 
