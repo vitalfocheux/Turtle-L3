@@ -159,7 +159,8 @@ struct array {
 struct array *array_create();
 void array_destroy(struct array *self);
 void array_push_back(struct array *self, struct ast_node *node);
-struct ast_node *array_get(struct array *self, const char *name);
+struct ast_node *array_var_get(struct array *self, const char *name);
+struct ast_node *array_proc_get(struct array *self, const char *name);
 
 // the execution context
 struct context {

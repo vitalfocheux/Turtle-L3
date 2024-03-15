@@ -385,13 +385,24 @@ void array_push_back(struct array *self, struct ast_node *node){
   self->data[self->size++] = node;
 }
 
-struct ast_node *array_get(struct array *self, const char *name){
+struct ast_node *array_var_get(struct array *self, const char *name){
   for(size_t i = 0; i < self->size; ++i){
     if(strcmp(self->data[i]->children[0]->u.name, name) == 0){
       return self->data[i]->children[1];
     }
   }
   printf("Variable %s not found\n", name);
+  exit(-1);
+}
+
+struct ast_node *array_proc_get(struct array *self, const char *name){
+  for(size_t i = 0; i < self->size; ++i){
+    if(strcmp(self->data[i]->children[0]->u.name, name) == 0){
+      return self->data[i]->children[1];
+    }
+    // printf("name %s\n", self->data[i]->children[0]->u.name);
+  }
+  printf("Procedure %s not found\n", name);
   exit(-1);
 }
 
@@ -431,9 +442,18 @@ void ast_eval_node_cmd_simple(const struct ast_node *self, struct context *ctx){
     case CMD_DOWN:
       ctx->up = false;
       break;
-    case CMD_PRINT:
-      printf("print\n");
-      ast_eval_node(self->children[0], ctx);
+     case CMD_RIGHT:
+      // printf("Right\n");
+      ctx->angle = ctx->angle + ast_eval_node(self->children[0], ctx);
+      break;
+    case CMD_LEFT:
+      ctx->angle = ctx->angle - ast_eval_node(self->children[0], ctx);
+      break;
+    case CMD_HEADING:
+    /**
+     * Demande pour heading
+    */
+      ctx->angle = ast_eval_node(self->children[0], ctx);
       break;
     case CMD_FORWARD:
       // printf("Forward\n");
@@ -458,20 +478,14 @@ void ast_eval_node_cmd_simple(const struct ast_node *self, struct context *ctx){
         printf("LineTo %f %f\n", ctx->x, ctx->y);
       }
       break;
-    case CMD_RIGHT:
-      // printf("Right\n");
-      ctx->angle = ctx->angle + ast_eval_node(self->children[0], ctx);
-      break;
-    case CMD_LEFT:
-      ctx->angle = ctx->angle - ast_eval_node(self->children[0], ctx);
-      break;
-    case CMD_COLOR:
-      printf("Color ");
-      if(self->children_count == 3){
-        printf("%f %f %f\n", ast_eval_node(self->children[0], ctx), ast_eval_node(self->children[1], ctx), ast_eval_node(self->children[2], ctx));
+    case CMD_POSITION:
+      ctx->x = ast_eval_node(self->children[0], ctx);
+      ctx->y = ast_eval_node(self->children[1], ctx);
+      if(ctx->up){
+        printf("MoveTo %f %f\n", ctx->x, ctx->y);
       }else{
-        ast_eval_node(self->children[0], ctx);
-      }      
+        printf("LineTo %f %f\n", ctx->x, ctx->y);
+      }
       break;
     case CMD_HOME:
       ctx->x = 0;
@@ -482,6 +496,18 @@ void ast_eval_node_cmd_simple(const struct ast_node *self, struct context *ctx){
       printf("LineTo 0.0 0.0\n");
       printf("Color 0.0 0.0 0.0\n");
       break;
+    case CMD_COLOR:
+      printf("Color ");
+      if(self->children_count == 3){
+        printf("%f %f %f\n", ast_eval_node(self->children[0], ctx), ast_eval_node(self->children[1], ctx), ast_eval_node(self->children[2], ctx));
+      }else{
+        ast_eval_node(self->children[0], ctx);
+      }      
+      break;
+    case CMD_PRINT:
+      printf("print\n");
+      ast_eval_node(self->children[0], ctx);
+      break;    
   }
 }
 
@@ -498,10 +524,15 @@ void ast_eval_node_cmd_block(const struct ast_node *self, struct context *ctx){
 }
 
 void ast_eval_node_cmd_proc(const struct ast_node *self, struct context *ctx){
-
+  // printf("proc\n");
+  // printf("kind : %d, children : %ld\n", self->kind, self->children_count);
+  // printf("children 0 : %d, children 1 : %d\n", self->children[0]->kind, self->children[1]->kind);
+  array_push_back(ctx->procs, self);
 }
 
-void ast_eval_node_cmd_call(const struct ast_node *self, struct context *ctx){}
+void ast_eval_node_cmd_call(const struct ast_node *self, struct context *ctx){
+  ast_eval_node(array_proc_get(ctx->procs, self->children[0]->u.name), ctx);
+}
 
 void ast_eval_node_cmd_set(const struct ast_node *self, struct context *ctx){
   // printf("set %f\n", ast_eval_node(self->children[1], ctx));
@@ -583,7 +614,7 @@ double ast_eval_node_expr_binop(const struct ast_node *self, struct context *ctx
 void ast_eval_node_expr_block(const struct ast_node *self, struct context *ctx){}
 
 double ast_eval_node_expr_name(const struct ast_node *self, struct context *ctx){
-  struct ast_node *value = array_get(ctx->vars, self->u.name);
+  struct ast_node *value = array_var_get(ctx->vars, self->u.name);
   return value->u.value;
 }
 
@@ -631,6 +662,9 @@ double ast_eval_node(const struct ast_node *self, struct context *ctx){
   }
   double result = 0;
   // printf("%d\n", self->kind);
+  // if(self->kind == 3){
+  //   printf("BLOOOOCK\n");
+  // }
   switch(self->kind){
     case KIND_CMD_SIMPLE:
       ast_eval_node_cmd_simple(self, ctx);
@@ -641,8 +675,10 @@ double ast_eval_node(const struct ast_node *self, struct context *ctx){
     case KIND_CMD_BLOCK:
       break;
     case KIND_CMD_PROC:
+      ast_eval_node_cmd_proc(self, ctx);
       break;
     case KIND_CMD_CALL:
+      ast_eval_node_cmd_call(self, ctx);
       break;
     case KIND_CMD_SET:
       ast_eval_node_cmd_set(self, ctx);
