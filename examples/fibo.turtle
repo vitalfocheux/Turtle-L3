@@ -1,0 +1,19 @@
+set SUIT 20
+
+proc FIBONACCI {
+
+    set A 0
+    set B 1
+
+    repeat SUIT {
+
+        print B
+        set C A + B
+        set A B
+        set B C
+
+    }
+
+}
+
+call FIBONACCI
