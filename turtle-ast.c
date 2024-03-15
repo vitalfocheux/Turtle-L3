@@ -382,6 +382,13 @@ void array_push_back(struct array *self, struct ast_node *node){
     self->capacity *= 2;
     self->data = realloc(self->data, self->capacity * sizeof(struct ast_node*));
   }
+  // self->data[self->size++] = node;
+  for(size_t i = 0; i < self->size; ++i){
+    if(strcmp(self->data[i]->children[0]->u.name, node->children[0]->u.name) == 0){
+      self->data[i] = node;
+      return;
+    }
+  }
   self->data[self->size++] = node;
 }
 
@@ -505,22 +512,24 @@ void ast_eval_node_cmd_simple(const struct ast_node *self, struct context *ctx){
       }      
       break;
     case CMD_PRINT:
-      printf("print\n");
-      ast_eval_node(self->children[0], ctx);
+      // printf("print\n");
+      printf("%f\n", ast_eval_node(self->children[0], ctx));
       break;    
   }
 }
 
 void ast_eval_node_cmd_repeat(const struct ast_node *self, struct context *ctx){
-  
-  for (int i = 0; i < self->children[0]->u.value; i++) {
+  // printf("repeat %f\n", ast_eval_node(self->children[0], ctx));
+  int size = floor(ast_eval_node(self->children[0], ctx));
+  for (int i = 0; i < size; i++) {
     // printf("repeat\n");
     ast_eval_node(self->children[1], ctx);
   }
 }
 
 void ast_eval_node_cmd_block(const struct ast_node *self, struct context *ctx){
-
+  // printf("block\n");
+  // printf("kind : %d, children : %ld\n", self->kind, self->children_count);
 }
 
 void ast_eval_node_cmd_proc(const struct ast_node *self, struct context *ctx){
@@ -615,6 +624,7 @@ void ast_eval_node_expr_block(const struct ast_node *self, struct context *ctx){
 
 double ast_eval_node_expr_name(const struct ast_node *self, struct context *ctx){
   struct ast_node *value = array_var_get(ctx->vars, self->u.name);
+  // printf("%s = %f\n",self->u.name, value->u.value);
   return value->u.value;
 }
 
@@ -662,7 +672,7 @@ double ast_eval_node(const struct ast_node *self, struct context *ctx){
   }
   double result = 0;
   // printf("%d\n", self->kind);
-  // if(self->kind == 3){
+  // if(self->kind == 2){
   //   printf("BLOOOOCK\n");
   // }
   switch(self->kind){
@@ -673,6 +683,7 @@ double ast_eval_node(const struct ast_node *self, struct context *ctx){
       ast_eval_node_cmd_repeat(self, ctx);
       break;
     case KIND_CMD_BLOCK:
+      ast_eval_node_cmd_block(self, ctx);
       break;
     case KIND_CMD_PROC:
       ast_eval_node_cmd_proc(self, ctx);
