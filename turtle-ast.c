@@ -475,13 +475,12 @@ void ast_eval_node_cmd_simple(const struct ast_node *self, struct context *ctx){
       }
       break;
     case CMD_BACKWARD:
-      ctx->y -= (-self->children[0]->u.value) * cos(deg_to_rad(ctx->angle));
-      ctx->x += (-self->children[0]->u.value) * sin(deg_to_rad(ctx->angle));
+      val = ast_eval_node(self->children[0], ctx);
+      ctx->y -= (-val) * cos(deg_to_rad(ctx->angle));
+      ctx->x += (-val) * sin(deg_to_rad(ctx->angle));
       if(ctx->up){
         printf("MoveTo %f %f\n", ctx->x, ctx->y);
       }else{
-        ctx->x = ctx->x + self->children[0]->u.value;
-        ctx->y = ctx->y;
         printf("LineTo %f %f\n", ctx->x, ctx->y);
       }
       break;
