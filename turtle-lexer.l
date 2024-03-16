@@ -71,6 +71,7 @@ VAR             [A-Z][A-Z0-9]*
 
 [-+*/^,(){}]          { return *yytext; }
 
+{COMMENT}             /* commentaire */
 [\n\t ]*              /* whitespace */
 .                     { fprintf(stderr, "Unknown token: '%s'\n", yytext); exit(EXIT_FAILURE); }
 
