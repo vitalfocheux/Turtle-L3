@@ -1,0 +1,84 @@
+# From "Introductory Programming Using Logo" by Simone Rudge. 
+# From http://lwh.free.fr/pages/prog/logo/logo.htm
+
+# Here's a simple procedure that puts a braided border 
+# around the edge of the screen. You can change the size 
+# of the border by changing the variable used by strip 
+
+# Change theses variables for change the size of the broder
+set LEFTRIGHT 40
+set UPDOWN    60
+
+proc BORDER {
+
+    up
+    lt 90
+    fw 200
+    lt 90
+    fw 100
+    lt 180
+    down
+    call BRAID
+
+}
+
+proc BRAID {
+
+    set SQR2 1.4
+    set HFSQ2 0.7
+    set S2 8.5
+    set H2 4.2
+    set S2H2 12.7
+    up
+    fw 24
+    rt 45
+    fw 4.2
+    hd 0
+    down
+    repeat 2 {
+        call STRIP1
+        call CORNER
+        call STRIP2
+        call CORNER
+    }
+}
+
+proc CORNER {
+
+    lt 45 fw H2 rt 45 fw 6 
+    rt 45 fw S2 rt 45 fw 18 
+    rt 45 fw S2H2 up 
+    rt 90 fw H2 down rt 90 fw S2 
+    lt 45 fw 18 lt 90 fw 6 up 
+    lt 45 fw S2 down lt 90 fw 17 up 
+    rt 90 fw H2 down rt 90 fw 17 up 
+    rt 45 fw 6 rt 90 fw 12 down 
+    rt 45 fw H2 rt 45 fw 6 
+    rt 45 fw H2 up rt 90 fw H2 down 
+    rt 45 fw 6 up bw 15 rt 90 fw 9 rt 90 down 
+
+}
+
+proc STRIP1 {
+    repeat LEFTRIGHT { 
+        lt 45 fw H2 rt 45 fw 6 rt 45 fw S2H2 
+        up rt 90 fw H2 down rt 90 fw S2 lt 45 fw 6 up 
+        lt 45 fw S2H2 down lt 90 fw H2 lt 45 
+        fw 6 lt 45 fw S2H2 up lt 90 fw H2 down lt 90 
+        fw S2 rt 45 fw 6 up rt 135 fw S2H2 rt 45 
+        fw 6 down 
+    }
+}
+
+proc STRIP2 {
+    repeat UPDOWN { 
+        lt 45 fw H2 rt 45 fw 6 rt 45 fw S2H2 
+        up rt 90 fw H2 down rt 90 fw S2 lt 45 fw 6 up 
+        lt 45 fw S2H2 down lt 90 fw H2 lt 45 
+        fw 6 lt 45 fw S2H2 up lt 90 fw H2 down lt 90 
+        fw S2 rt 45 fw 6 up rt 135 fw S2H2 rt 45 
+        fw 6 down 
+    }
+}
+
+call BORDER

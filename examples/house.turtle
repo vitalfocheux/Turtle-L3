@@ -1,0 +1,75 @@
+
+proc CHIMNEY { 
+    bw 60 lt 120 fw 30 lt 90 fw 20 lt 90 fw 18 
+    bw 18 lt 90 fw 20 rt 90 fw 30 lt 60 fw 60 
+}
+
+proc DOOR { 
+    rt 90 fw 85 lt 90 fw 5 rt 90 fw 30 bw 25 
+    lt 90 fw 35 rt 90 fw 20 rt 90 fw 35 lt 90 
+    fw 5 rt 90 fw 5 rt 90 fw 115 rt 90 
+}
+
+proc GARAGE { 
+    rt 90 fw 290 bw 20 repeat 4 { lt 90 fw 50 } 
+    fw 20 repeat 4 { lt 90 fw 90 } bw 290 lt 90 
+}
+
+proc HOUSE { 
+    call SETUP 
+    call WALLS 
+    call ROOF 
+    call CHIMNEY 
+    call DOOR 
+    call WINDOWS 
+    call GARAGE 
+}
+
+proc MOVE1 { 
+    up rt 90 fw 30 lt 90 down 
+}
+
+proc MOVE2 { 
+    up lt 90 fw 30 rt 90 down 
+}
+
+proc PANES { 
+    repeat 4 { fw 20 rt 90 repeat 4 { fw 10 rt 90 } } 
+}
+
+proc ROOF { 
+    fw 160 lt 90 
+    fw 20 rt 150 fw sqrt( 120 * 120 + 70 * 70 ) 
+    rt 60 fw sqrt( 120 * 120 + 70 * 70 ) 
+    call CHIMNEY rt 150 fw 20 
+    lt 90 fw 160 rt 90 fw 200 rt 90 
+}
+
+proc SETUP { 
+    up bw 50 lt 90 fw 200 rt 90 down 
+}
+
+proc WPANES {
+    repeat 2 { fw 20 rt 90 repeat 2 { fw 20 rt 90 fw 10 rt 90 } 
+    fw 40 rt 90 repeat 2 { fw 10 rt 90 fw 20 rt 90 } } 
+}
+
+proc WALLS { 
+    repeat 2 { fw 160 rt 90 fw 200 rt 90 } 
+}
+
+proc WINDOWS { 
+    up fw 80 rt 90 fw 15 lt 90 down 
+    repeat 6 { call PANES call MOVE1 } 
+    up fw 40 call MOVE2 down 
+    repeat 6 { call PANES call MOVE2 } 
+    up bw 90 call MOVE1 down 
+    call WPANES 
+    up rt 90 fw 130 lt 90 down 
+    call WPANES 
+    up bw 10 rt 90 fw 80 lt 90 down 
+    call WPANES 
+    up bw 20 lt 90 fw 225 rt 90 down 
+}
+
+call HOUSE 

@@ -1,0 +1,22 @@
+# From "Introductory Programming Using Logo" by Simone Rudge. 
+# From http://lwh.free.fr/pages/prog/logo/logo.htm
+
+proc BORDER { 
+    up bw 160 rt 90 lt 90 down 
+    repeat 2 { repeat 6 { call PATTERN } up fw 30 down lt 90 } 
+    repeat 12 { call PATTERN } up fw 30 down lt 90 
+    repeat 2 { repeat 6 { call PATTERN } up fw 30 down lt 90 } 
+    fw 330 rt 90 fw 300 rt 90 fw 630 rt 90 
+    repeat 2 { fw 300 rt 90 } 
+    bw 30 lt 90 
+    repeat 2 { fw 360 rt 90 } fw 690 rt 90 
+    repeat 2 { fw 360 rt 90 } 
+    up fw 160 down 
+}
+
+proc PATTERN {
+    repeat 3 { fw 30 rt 90 } rt 90 repeat 3 { fw 17 rt 90 } 
+    rt 90 repeat 3 { fw 8 rt 90 } rt 90 
+}
+
+call BORDER 

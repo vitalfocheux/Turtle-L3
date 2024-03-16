@@ -1,0 +1,26 @@
+# From "Introductory Programming Using Logo" by Simone Rudge. 
+# From http://lwh.free.fr/pages/prog/logo/logo.htm
+
+set CCD 100
+set CD  150
+
+
+# draws a circle of a CCD diameter 
+# around a central point 
+proc CCIRCLE {
+    
+    up fw CCD * 0.5 rt 90 down 
+    repeat 36 { fw PI * CCD / 36 rt 10 }
+    up lt 90 bw CCD * 0.5 down 
+}
+
+# draws a circle of a CD diameter
+proc CIRCLE {
+     
+    repeat 36 { fw PI * CD / 36 rt 10 }
+}
+
+color red 
+call CIRCLE 
+color blue 
+call CCIRCLE 
