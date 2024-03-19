@@ -1,0 +1,23 @@
+# FROM http://www.cs.uni.edu/~jacobson/logo/ 
+proc DASH { 
+    repeat N { down fw N up fw N } 
+    bw N 
+    down 
+}
+
+proc OCTAGON { 
+    set N 6
+    repeat 8 { fw 85 call SQUAREDASHTWIRL rt 45 } 
+}
+
+proc SQUAREDASH { 
+    repeat 4 { call DASH rt 90 } 
+}
+
+proc SQUAREDASHTWIRL { 
+    repeat 36 { call SQUAREDASH rt 10 } 
+}
+
+color red 
+set N 9
+call OCTAGON

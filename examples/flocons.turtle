@@ -1,0 +1,80 @@
+set SIZE 100
+set SIZE3 SIZE / 3
+set SIZE5 SIZE / 5
+set SIZE7 SIZE / 7
+
+proc BRANCH1 {
+    rt 45 fw SIZE3 bw SIZE3
+    lt 90 fw SIZE3 bw SIZE3
+    rt 45 
+}
+
+proc BRANCH2 {
+    rt 45 fw SIZE5 bw SIZE5
+    lt 90 fw SIZE5 bw SIZE5
+    rt 45 
+}
+
+proc BRANCH3 {
+    rt 45 fw SIZE7 bw SIZE7
+    lt 90 fw SIZE7 bw SIZE7
+    rt 45
+}
+
+proc FLAKE {
+    up fw SIZE5 down
+    lt 10 fw SIZE5 rt 10
+    repeat 10 { fw SIZE * 0.01 rt 18 }
+    rt 10 fw SIZE5 lt 10
+    up bw SIZE5 fw SIZE5 * 2 rt 180 down
+    up lt 30 fw SIZE / 15 * 2 down
+    rt 7.5 fw SIZE3 rt 80 fw SIZE / 15 * 2 lt 100
+    repeat 27 { fw SIZE * 0.02 rt 10 } lt 100
+    fw SIZE / 15 * 2 rt 80 fw SIZE3 rt 7.5
+    up fw SIZE / 15 * 2 rt 145 down
+}
+
+proc PART {
+    fw SIZE3 call BRANCH1
+    fw SIZE3 call BRANCH2
+    fw SIZE3 call BRANCH3 
+    bw SIZE
+}
+
+proc PART2 {
+
+    fw SIZE3
+    call BRANCH1
+    fw SIZE3
+    call BRANCH2
+    fw SIZE3 bw SIZE
+
+}
+
+proc SNOW {
+    color 0, 0, 1
+    repeat 6 {
+        call FLAKE
+        rt 60
+    }
+}
+
+proc SNOW2 {
+    color 20/255, 20/255, 128/255
+    repeat 6 { 
+        call PART 
+        rt 60 
+    }
+}
+
+proc SNOW3 {
+    color cyan
+    repeat 6 {
+        call PART2
+        rt 60
+    }
+}
+
+up pos -250, 0 down call SNOW
+up pos -50, 0 down call SNOW2
+up pos 200, 0 down call SNOW3

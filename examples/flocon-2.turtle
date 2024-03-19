@@ -1,0 +1,39 @@
+set SIZE 100
+set SIZE3 SIZE / 3
+set SIZE5 SIZE / 5
+set SIZE7 SIZE / 7
+
+proc BRANCH1 {
+    rt 45 fw SIZE3 bw SIZE3
+    lt 90 fw SIZE3 bw SIZE3
+    rt 45 
+}
+
+proc BRANCH2 {
+    rt 45 fw SIZE5 bw SIZE5
+    lt 90 fw SIZE5 bw SIZE5
+    rt 45 
+}
+
+proc BRANCH3 {
+    rt 45 fw SIZE7 bw SIZE7
+    lt 90 fw SIZE7 bw SIZE7
+    rt 45
+}
+
+proc PART {
+    fw SIZE3 call BRANCH1
+    fw SIZE3 call BRANCH2
+    fw SIZE3 call BRANCH3 
+    bw SIZE
+}
+
+proc SNOW2 {
+    color 20/255, 20/255, 128/255
+    repeat 6 { 
+        call PART 
+        rt 60 
+    }
+}
+
+call SNOW2
