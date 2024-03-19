@@ -409,8 +409,9 @@ struct ast_node *array_proc_get(struct array *self, const char *name){
     }
     // printf("name %s\n", self->data[i]->children[0]->u.name);
   }
-  printf("Procedure %s not found\n", name);
-  exit(-1);
+  return NULL;
+  // printf("Procedure %s not found\n", name);
+  // exit(-1);
 }
 
 
@@ -535,11 +536,22 @@ void ast_eval_node_cmd_proc(const struct ast_node *self, struct context *ctx){
   // printf("proc\n");
   // printf("kind : %d, children : %ld\n", self->kind, self->children_count);
   // printf("children 0 : %d, children 1 : %d\n", self->children[0]->kind, self->children[1]->kind);
-  array_push_back(ctx->procs, self);
+  struct ast_node *proc = array_proc_get(ctx->procs, self->children[0]->u.name);
+  if(proc != NULL){
+    printf("Redefinition of procedure %s\n", self->children[0]->u.name);
+    exit(-1);
+  }else{
+    array_push_back(ctx->procs, (struct ast_node*)self);
+  }
 }
 
 void ast_eval_node_cmd_call(const struct ast_node *self, struct context *ctx){
-  ast_eval_node(array_proc_get(ctx->procs, self->children[0]->u.name), ctx);
+  struct ast_node *proc = array_proc_get(ctx->procs, self->children[0]->u.name);
+  if(proc == NULL){
+    printf("Procedure %s not found\n", self->children[0]->u.name);
+    exit(-1);
+  }
+  ast_eval_node(proc, ctx);
 }
 
 void ast_eval_node_cmd_set(const struct ast_node *self, struct context *ctx){
@@ -559,11 +571,20 @@ double ast_eval_node_expr_func(const struct ast_node *self, struct context *ctx)
       return tan(ast_eval_node(self->children[0], ctx));
       break;
     case FUNC_SQRT:
-      return sqrt(ast_eval_node(self->children[0], ctx));
+      double value = ast_eval_node(self->children[0], ctx);
+      if(value < 0){
+        printf("Square root of a negative number\n");
+        exit(-1);
+      }
+      return sqrt(value);
       break;
     case FUNC_RANDOM:
       double lower_bound = ast_eval_node(self->children[0], ctx);
       double upper_bound = ast_eval_node(self->children[1], ctx);
+      if(lower_bound > upper_bound){
+        printf("Lower bound greater than upper bound\n");
+        exit(-1);
+      }
       return ((((float) rand()) / (float) RAND_MAX) * (upper_bound - lower_bound) + lower_bound);
       break;
     default:
@@ -576,7 +597,7 @@ double ast_eval_node_expr_func(const struct ast_node *self, struct context *ctx)
 void ast_eval_node_expr_value(const struct ast_node *self, struct context *ctx){}
 
 double ast_eval_node_expr_unop(const struct ast_node *self, struct context *ctx){
-  printf("unop %c\n", self->u.op);
+  // printf("unop %c\n", self->u.op);
   switch(self->u.op){
     case '-':
       return -ast_eval_node(self->children[0], ctx);
@@ -610,7 +631,17 @@ double ast_eval_node_expr_binop(const struct ast_node *self, struct context *ctx
       return ast_eval_node(self->children[0], ctx) / ast_eval_node(self->children[1], ctx);
       break;
     case '^' :
-      return pow(ast_eval_node(self->children[0], ctx), ast_eval_node(self->children[1], ctx));
+      double value = ast_eval_node(self->children[0], ctx);
+      double power = ast_eval_node(self->children[1], ctx);
+      if(value < 0 && power != floor(power)){
+        printf("Negative number raised to a non-integer power\n");
+        exit(-1);
+      }
+      if(value == 0 && power < 0){
+        printf("Zero raised to a negative power\n");
+        exit(-1);
+      }
+      return pow(value, power);
       break;
     default:
       printf("Unknown operator\n");
