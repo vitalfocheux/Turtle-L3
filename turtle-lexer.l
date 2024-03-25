@@ -18,12 +18,13 @@ VAR             [A-Z][A-Z0-9]*
 
 %%
 
-    /* les reconnaissances des lexèmes relatif aux valeurs reconnu avec des regex */
+    /* Recognition of lexemes relative to recognized values using regex */
 {DIGIT}+              { yylval.value = strtod(yytext, NULL); return VALUE; }
 {DOUBLE}+             { yylval.value = strtod(yytext, NULL); return VALUE; }
 {HEXA}+               { yylval.value = strtod(yytext, NULL); return VALUE; }
 {VAR}                 { yylval.name = yytext; return NAME; }
 
+    /* The recognition of lexemes related to colors */
 "red"                 {return RED;}
 "green"               {return GREEN;}
 "blue"                {return BLUE;}
@@ -34,7 +35,7 @@ VAR             [A-Z][A-Z0-9]*
 "grey"                {return GREY;}
 "white"               {return WHITE;}
 
-    /* les reconnaissances des lexèmes relatif aux fonctions */
+    /* The recognition of lexemes related to functions */
 
 "sin"                 { return FCT_SIN; }
 "cos"                 { return FCT_COS; }
@@ -42,7 +43,7 @@ VAR             [A-Z][A-Z0-9]*
 "sqrt"                { return FCT_SQRT; }
 "random"              { return FCT_RANDOM; }
 
-    /* les reconnaissances des lexèmes relatif aux commandes */
+    /* The recognition of lexemes related to commands */
 
 "print"               { return KW_PRINT; }
 "up"                  { return KW_UP; }
@@ -71,7 +72,7 @@ VAR             [A-Z][A-Z0-9]*
 
 [-+*/^,(){}]          { return *yytext; }
 
-{COMMENT}             /* commentaire */
+{COMMENT}             /* Comments */
 [\n\t ]*              /* whitespace */
 .                     { fprintf(stderr, "Unknown token: '%s'\n", yytext); exit(EXIT_FAILURE); }
 

@@ -80,6 +80,7 @@ cmds:
   | /* empty */       { $$ = NULL; }
 ;
 
+/* Grammar of tokens related to colors */
 color:
     RED               { $$ = make_cmd_color_name(COLOR_RED); }
   | GREEN             { $$ = make_cmd_color_name(COLOR_GREEN); }
@@ -92,16 +93,19 @@ color:
   | WHITE             { $$ = make_cmd_color_name(COLOR_WHITE); }
 ;
 
+/* Grammar of the token related to variable and procedure names */
 name:
     NAME             { $$ = make_expr_name($1); }
 ;
 
+/* Grammar of tokens related to command parameters */
 param:
     cmd              { $$ = $1; }
   | expr             { $$ = $1; }
   | name             { $$ = $1; }
 ;
 
+/* Grammar of tokens related to Turtle commands */
 cmd:
     KW_PRINT    param                    { $$ = make_cmd_print($2); }
   | KW_UP                               { $$ = make_cmd_up(); }
@@ -125,7 +129,7 @@ cmd:
 
 
 
-
+/* Token grammar related to expressions */
 expr:
     VALUE             { $$ = make_expr_value($1); }
   | name              { $$ = $1; }
@@ -139,6 +143,7 @@ expr:
   | func
 ;
 
+/* Grammar of tokens related to functions */
 func:
     FCT_SIN     '(' expr ')'               { $$ = make_math_sin($3); }
   | FCT_COS     '(' expr ')'               { $$ = make_math_cos($3); }
