@@ -1,0 +1,94 @@
+proc LTLGTRIANGLE { 
+    fw SIZE 
+    lt 135 
+    fw SIZE / SQRT2 
+    lt 90 
+    fw SIZE / SQRT2 
+    lt 135 
+}
+
+proc LTMEDTRIANGLE { 
+    fw SIZE / SQRT2 
+    lt 135 
+    fw SIZE / 2 
+    lt 90 
+    fw SIZE / 2 
+    lt 135 
+}
+
+proc LTPARA { 
+    repeat 2 { fw SIZE / 2 lt 45 fw ( SIZE / SQRT2 ) / 2 lt 135 }
+}
+
+proc LTSMTRIANGLE { 
+    fw SIZE / 2 
+    lt 135 
+    fw ( SIZE / SQRT2 ) / 2 
+    lt 90 
+    fw ( SIZE / SQRT2 ) / 2 
+    lt 135 
+}
+
+proc LTSQUARE {  
+    repeat 4 { fw ( SIZE / SQRT2 ) / 2 lt 90 }
+}
+
+proc RTLGTRIANGLE { 
+    fw SIZE 
+    rt 135 
+    fw SIZE / SQRT2 
+    rt 90 
+    fw SIZE / SQRT2 
+    rt 135 
+}
+
+proc RTMEDTRIANGLE {  
+    fw SIZE / SQRT2 
+    rt 135 
+    fw SIZE / 2 
+    rt 90 
+    fw SIZE / 2 
+    rt 135 
+}
+
+proc RTPARA { 
+    repeat 2 { fw SIZE / 2 rt 45 fw ( SIZE / SQRT2 ) / 2 rt 135 }
+}
+
+proc RTSMTRIANGLE { 
+    fw SIZE / 2 
+    rt 135 
+    fw ( SIZE / SQRT2 ) / 2 
+    rt 90 
+    fw ( SIZE / SQRT2 ) / 2 
+    rt 135 
+}
+
+proc RTSQUARE {  
+    repeat 4 { fw ( SIZE / SQRT2 ) / 2 rt 90 }
+}
+
+proc TANSWAN {
+    up bw 150 down 
+    lt 45 call LTLGTRIANGLE 
+    fw SIZE rt 135 call RTLGTRIANGLE 
+    rt 90 call RTMEDTRIANGLE  
+    rt 45 fw SIZE / 2 rt 135 
+    call RTSMTRIANGLE  
+    fw SIZE / 2 rt 45 call RTSQUARE  
+    fw ( SIZE / SQRT2 ) / 2 lt 45 
+    fw SIZE / 2 rt 180 call LTPARA 
+    rt 45 call LTSMTRIANGLE 
+}
+
+set X -200
+set SIZE 100
+
+repeat 4 { 
+up 
+pos X, 100 
+hd 0 
+down 
+call TANSWAN 
+set X X + 150 
+} 
