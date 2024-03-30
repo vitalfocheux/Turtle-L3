@@ -16,7 +16,7 @@ proc TOWER {
   right 90
   fw 10
   heading 0
-  bw 100
+  bw 200
 }
 
 proc CRENEL {
@@ -28,9 +28,9 @@ proc CRENEL {
   }
 }
 
-up
-position -100, 0
-down
+#up
+#position 200, 0
+#down
 call TOWER
 fw 100
 call CRENEL
