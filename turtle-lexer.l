@@ -32,7 +32,7 @@ VAR             [A-Z][A-Z0-9]*
 "magenta"             {return MAGENTA;}
 "yellow"              {return YELLOW;}
 "black"               {return BLACK;}
-"grey"                {return GREY;}
+"gray"                {return GREY;}
 "white"               {return WHITE;}
 
     /* The recognition of lexemes related to functions */
