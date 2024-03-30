@@ -439,6 +439,14 @@ void ast_eval_node_cmd_proc(const struct ast_node *self, struct context *ctx){
     printf("Redefinition of procedure %s\n", self->children[0]->u.name);
     exit(-1);
   }else{
+    struct ast_node *node = self->children[1];
+    while(node->next != NULL){
+      if(node->kind == KIND_CMD_PROC){
+        printf("Definition of procedure %s in procedure %s\n", node->children[0]->u.name, self->children[0]->u.name);
+        exit(-1);
+      }
+      node = node->next;
+    }
     array_push_back(ctx->procs, (struct ast_node*)self);
   }
 }
