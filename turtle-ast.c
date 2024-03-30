@@ -406,7 +406,7 @@ void ast_eval_node_cmd_simple(const struct ast_node *self, struct context *ctx){
       ctx->angle = 0;
       ctx->up = false;
       ctx->color = COLOR_BLACK;
-      printf("LineTo 0.0 0.0\n");
+      printf("MoveTo 0.0 0.0\n");
       printf("Color 0.0 0.0 0.0\n");
       break;
     case CMD_COLOR:
